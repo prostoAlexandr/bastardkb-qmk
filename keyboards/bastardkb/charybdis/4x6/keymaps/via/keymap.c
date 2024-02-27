@@ -28,7 +28,7 @@ enum charybdis_keymap_layers {
 };
 
 /** \brief Automatically enable sniping-mode on the pointer layer. */
-#define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
+// #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
@@ -126,7 +126,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
             layer_on(LAYER_POINTER);
 #        ifdef RGB_MATRIX_ENABLE
             rgb_matrix_mode_noeeprom(RGB_MATRIX_NONE);
-            rgb_matrix_sethsv_noeeprom(HSV_GREEN);
+            rgb_matrix_sethsv_noeeprom(HSV_WHITE);
 #        endif // RGB_MATRIX_ENABLE
         }
         auto_pointer_layer_timer = timer_read();
@@ -139,7 +139,7 @@ void matrix_scan_user(void) {
         auto_pointer_layer_timer = 0;
         layer_off(LAYER_POINTER);
 #        ifdef RGB_MATRIX_ENABLE
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_DEFAULT_MODE);
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_CYCLE_ALL);
 #        endif // RGB_MATRIX_ENABLE
     }
 }
