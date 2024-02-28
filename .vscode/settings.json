@@ -18,7 +18,12 @@
         "xstddef": "c",
         "type_traits": "c",
         "utility": "c",
-        "ranges": "c"
+        "ranges": "c",
+        "*.ipp": "c",
+        "*.tcc": "c",
+        "random": "c",
+        "fstream": "c",
+        "ostream": "c"
     },
     "[markdown]": {
         "editor.trimAutoWhitespace": false,
@@ -30,5 +35,6 @@
     },
     "clangd.arguments": [
         "--header-insertion=never"
-    ]
+    ],
+    "C_Cpp.dimInactiveRegions": false
 }
