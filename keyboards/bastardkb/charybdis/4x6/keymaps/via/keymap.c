@@ -42,7 +42,6 @@ enum {
 #define TD_TGRV TD(TD_T_GRV)
 #define TD_UPHM TD(TD_PGUP_HOME)
 #define TD_DNEN TD(TD_PGDN_END)
-#define TD_BSDL TD(TD_BSPC_DEL)
 
 #define MT_AGUI MT(MOD_LGUI, KC_A)
 #define MT_SALT MT(MOD_LALT, KC_S)
@@ -96,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_MINS,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N, TD_MRBR, KC_COMM,  KC_DOT, KC_SLSH, KC_BSLS,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                    KC_ENT, MC_CLAN,   MO(1),    TD_UPHM,   TG(3),
-                                            KC_SPC, TD_BSDL,    TD_DNEN
+                                            KC_SPC, KC_BSPC,    TD_DNEN
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
@@ -138,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
          KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_RSFT,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    MS_BTN3, MS_BTN1, MS_BTN2, DRGSCRL, SNP_TOG,   KC_NO,
+        EE_CLR,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    MS_BTN3, MS_BTN1, MS_BTN2, DRGSCRL, SNP_TOG,   KC_NO,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                   KC_TRNS, KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS,
                                            KC_TRNS, KC_TRNS,    KC_TRNS
@@ -203,7 +202,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case TD(TD_T_GRV):
         case TD(TD_PGUP_HOME):
         case TD(TD_PGDN_END):
-        case TD(TD_BSPC_DEL):
         {
             action = &tap_dance_actions[TD_INDEX(keycode)];
             if (!record->event.pressed && action->state.count && !action->state.finished)
@@ -223,6 +221,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
 }
+
+// Tap dance part
 
 void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
     tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
@@ -260,5 +260,14 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_T_GRV]      = ACTION_TAP_DANCE_TAP_HOLD(KC_T,       KC_GRV),
     [TD_PGUP_HOME]  = ACTION_TAP_DANCE_TAP_HOLD(KC_PGUP,    KC_HOME),
     [TD_PGDN_END]   = ACTION_TAP_DANCE_TAP_HOLD(KC_PGDN,    KC_END),
-    [TD_BSPC_DEL]   = ACTION_TAP_DANCE_TAP_HOLD(KC_BSPC,    KC_DEL),
+};
+
+// Overrides part
+
+const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_BSPC, KC_DEL);
+
+// This globally defines all key overrides to be used
+const key_override_t **key_overrides = (const key_override_t *[]){
+	&delete_key_override,
+	NULL // Null terminate the array of overrides!
 };
