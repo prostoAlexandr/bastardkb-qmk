@@ -63,6 +63,8 @@ enum {
 #define MS_BTN1 KC_MS_BTN1
 #define MS_BTN2 KC_MS_BTN2
 #define MS_BTN3 KC_MS_BTN3
+#define LEFT_THUMB_MIN 53
+#define LEFT_THUMB_MAX 55
 
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 // #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
@@ -112,11 +114,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
         KC_F12,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_SLEP, KC_PSCR, RGB_VAI, RGB_MOD, KC_VOLU, KC_MNXT,     KC_TAB,   KC_P7,   KC_P8,   KC_P9, KC_PEQL, KC_RGHT,
+       KC_CALC,   KC_NO,   KC_NO, RGB_MOD, KC_VOLU, KC_MNXT,     KC_TAB,   KC_P7,   KC_P8,   KC_P9, KC_PEQL, KC_RGHT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_LSFT,   KC_NO,   KC_NO, RGB_TOG, KC_MUTE, KC_MPLY,    TD_PLML,   KC_P4,   KC_P5,   KC_P6,   KC_P0, KC_LEFT,
+       KC_PSCR, RGB_SPI, RGB_VAI, RGB_TOG, KC_MUTE, KC_MPLY,    TD_PLML,   KC_P4,   KC_P5,   KC_P6,   KC_P0, KC_LEFT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_CALC,   KC_NO, RGB_VAD,RGB_RMOD, KC_VOLD, KC_MPRV,    TD_MNDV,   KC_P1,   KC_P2,   KC_P3, KC_PDOT, KC_PCMM,
+       KC_SLEP, RGB_SPD, RGB_VAD,RGB_RMOD, KC_VOLD, KC_MPRV,    TD_MNDV,   KC_P1,   KC_P2,   KC_P3, KC_PDOT, KC_PCMM,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                   KC_TRNS, KC_TRNS,   TO(0),    KC_TRNS, KC_TRNS,
                                            KC_TRNS, KC_TRNS,    KC_TRNS
@@ -161,10 +163,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (abs(mouse_report.x) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || abs(mouse_report.y) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
         if (auto_pointer_layer_timer == 0) {
             layer_on(LAYER_POINTER);
-#        ifdef RGB_MATRIX_ENABLE
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_NONE);
-            rgb_matrix_sethsv_noeeprom(HSV_WHITE);
-#        endif // RGB_MATRIX_ENABLE
         }
         auto_pointer_layer_timer = timer_read();
     }
@@ -175,10 +173,6 @@ void matrix_scan_user(void) {
     if (auto_pointer_layer_timer != 0 && TIMER_DIFF_16(timer_read(), auto_pointer_layer_timer) >= CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS) {
         auto_pointer_layer_timer = 0;
         layer_off(LAYER_POINTER);
-#        ifdef RGB_MATRIX_ENABLE
-        rgb_matrix_sethsv_noeeprom(HSV_GREEN);
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_CYCLE_ALL);
-#        endif // RGB_MATRIX_ENABLE
     }
 }
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -327,4 +321,24 @@ bool caps_word_press_user(uint16_t keycode) {
         default:
             return false;  // Deactivate Caps Word.
     }
+}
+
+// Layer indicator
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    for (uint8_t i = led_min; i < led_max; i++) {
+        if ((i < LEFT_THUMB_MIN) || (i > LEFT_THUMB_MAX))
+            continue;
+        switch(get_highest_layer(layer_state|default_layer_state)) {
+            case LAYER_POINTER:
+                rgb_matrix_set_color(i, RGB_WHITE);
+                break;
+            case LAYER_LOWER:
+                rgb_matrix_set_color(i, RGB_YELLOW);
+                break;
+            default:
+                break;
+        }
+    }
+    return false;
 }
