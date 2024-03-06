@@ -34,6 +34,9 @@ enum {
     TD_PGUP_HOME,
     TD_PGDN_END,
     TD_BSPC_DEL,
+    TD_SLSH_QM,
+    TD_PLUS_MUL,
+    TD_MINS_DIV,
     TD_TAB_CAPSWORD,
     MC_CLAN = SAFE_RANGE,   // Macros part
     KC_SPCW,
@@ -44,6 +47,9 @@ enum {
 #define TD_TGRV TD(TD_T_GRV)
 #define TD_UPHM TD(TD_PGUP_HOME)
 #define TD_DNEN TD(TD_PGDN_END)
+#define TD_SLQM TD(TD_SLSH_QM)
+#define TD_PLML TD(TD_PLUS_MUL)
+#define TD_MNDV TD(TD_MINS_DIV)
 #define TD_TBCW TD(TD_TAB_CAPSWORD)
 
 #define MT_AGUI MT(MOD_LGUI, KC_A)
@@ -95,24 +101,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
         KC_EQL, MT_AGUI, MT_SALT, MT_DCTL, MT_FSFT,    KC_G,       KC_H, MT_JSFT, MT_KCTL, MT_LALT, MT_SCGU, KC_QUOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_MINS,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N, TD_MRBR, KC_COMM,  KC_DOT, KC_SLSH, KC_BSLS,
+       KC_MINS,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N, TD_MRBR, KC_COMM,  KC_DOT, TD_SLQM, KC_BSLS,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                   KC_ENT, MC_CLAN,   MO(1),    TD_UPHM,   TG(3),
+                                   KC_ENT, MC_CLAN,   TO(1),    TD_UPHM,   TO(3),
                                             KC_SPC, KC_BSPC,    TD_DNEN
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
   [LAYER_LOWER] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
-       KC_TILD, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,    KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_UNDS,
+        KC_F12,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       RGB_MOD,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_LBRC,   KC_P7,   KC_P8,   KC_P9, KC_RBRC,   KC_NO,
+       KC_SLEP, KC_PSCR, RGB_VAI, RGB_MOD, KC_VOLU, KC_MNXT,     KC_TAB,   KC_P7,   KC_P8,   KC_P9, KC_PEQL, KC_RGHT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       RGB_TOG, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT,   KC_NO,    KC_PPLS,   KC_P4,   KC_P5,   KC_P6, KC_PMNS, KC_PEQL,
+       KC_LSFT,   KC_NO,   KC_NO, RGB_TOG, KC_MUTE, KC_MPLY,    TD_PLML,   KC_P4,   KC_P5,   KC_P6,   KC_P0, KC_LEFT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-      RGB_RMOD,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_PAST,   KC_P1,   KC_P2,   KC_P3, KC_PSLS, KC_PDOT,
+       KC_CALC,   KC_NO, RGB_VAD,RGB_RMOD, KC_VOLD, KC_MPRV,    TD_MNDV,   KC_P1,   KC_P2,   KC_P3, KC_PDOT, KC_PCMM,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  KC_TRNS, KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS,
+                                  KC_TRNS, KC_TRNS,   TO(0),    KC_TRNS, KC_TRNS,
                                            KC_TRNS, KC_TRNS,    KC_TRNS
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
@@ -134,15 +140,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [LAYER_POINTER] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
-         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+        KC_F12,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
          KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    DPI_MOD,DPI_RMOD, S_D_MOD,S_D_RMOD,   KC_NO,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_RSFT,   KC_NO,
+         KC_NO, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT,   KC_NO,    KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_RSFT,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
         EE_CLR,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,    MS_BTN3, MS_BTN1, MS_BTN2, DRGSCRL, SNP_TOG,   KC_NO,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  KC_TRNS, KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS,
+                                  KC_TRNS, KC_TRNS, KC_TRNS,    KC_TRNS,   TO(0),
                                            KC_TRNS, KC_TRNS,    KC_TRNS
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
@@ -200,11 +206,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     tap_dance_action_t *action;
 
     switch (keycode) {
-        case TD(TD_GRV_ESC):
-        case TD(TD_M_RBRC):
-        case TD(TD_T_GRV):
-        case TD(TD_PGUP_HOME):
-        case TD(TD_PGDN_END):
+        case TD_GRES:
+        case TD_MRBR:
+        case TD_TGRV:
+        case TD_UPHM:
+        case TD_DNEN:
+        case TD_TBCW:
+        case TD_SLQM:
+        case TD_PLML:
+        case TD_MNDV:
         {
             action = &tap_dance_actions[TD_INDEX(keycode)];
             if (!record->event.pressed && action->state.count && !action->state.finished)
@@ -219,7 +229,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed)
             {
                 SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_SPC) SS_DELAY(200) SS_UP(X_SPC) SS_UP(X_LGUI));
-            } 
+            }
+            break;
         }
     }
     return true;
@@ -242,7 +253,7 @@ void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
             }
             else
             {
-            register_code16(tap_hold->hold);
+                register_code16(tap_hold->hold);
             }
             tap_hold->held = tap_hold->hold;
         } else {
@@ -265,6 +276,14 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
     { .fn = {NULL, tap_dance_tap_hold_finished, tap_dance_tap_hold_reset}, .user_data = (void *)&((tap_dance_tap_hold_t){tap, hold, 0}), }
 
 tap_dance_action_t tap_dance_actions[] = {
+    [TD_GRV_ESC]        = ACTION_TAP_DANCE_TAP_HOLD(KC_GRV,     KC_ESC),
+    [TD_M_RBRC]         = ACTION_TAP_DANCE_TAP_HOLD(KC_M,       KC_RBRC),
+    [TD_T_GRV]          = ACTION_TAP_DANCE_TAP_HOLD(KC_T,       KC_GRV),
+    [TD_PGUP_HOME]      = ACTION_TAP_DANCE_TAP_HOLD(KC_PGUP,    KC_HOME),
+    [TD_PGDN_END]       = ACTION_TAP_DANCE_TAP_HOLD(KC_PGDN,    KC_END),
+    [TD_SLSH_QM]        = ACTION_TAP_DANCE_TAP_HOLD(KC_SLSH,    S(KC_SLSH)),
+    [TD_PLUS_MUL]       = ACTION_TAP_DANCE_TAP_HOLD(KC_PPLS,    KC_PAST),
+    [TD_MINS_DIV]       = ACTION_TAP_DANCE_TAP_HOLD(KC_PMNS,    KC_PSLS),
     [TD_TAB_CAPSWORD]   = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB,     KC_SPCW),
 };
 
