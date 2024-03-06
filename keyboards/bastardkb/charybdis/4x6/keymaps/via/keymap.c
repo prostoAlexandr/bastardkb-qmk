@@ -34,7 +34,9 @@ enum {
     TD_PGUP_HOME,
     TD_PGDN_END,
     TD_BSPC_DEL,
+    TD_TAB_CAPSWORD,
     MC_CLAN = SAFE_RANGE,   // Macros part
+    KC_SPCW,
 };
 
 #define TD_GRES TD(TD_GRV_ESC)
@@ -42,6 +44,7 @@ enum {
 #define TD_TGRV TD(TD_T_GRV)
 #define TD_UPHM TD(TD_PGUP_HOME)
 #define TD_DNEN TD(TD_PGDN_END)
+#define TD_TBCW TD(TD_TAB_CAPSWORD)
 
 #define MT_AGUI MT(MOD_LGUI, KC_A)
 #define MT_SALT MT(MOD_LALT, KC_S)
@@ -88,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        TD_GRES,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_RBRC,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R, TD_TGRV,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_LBRC,
+        TD_TBCW,    KC_Q,    KC_W,    KC_E,    KC_R, TD_TGRV,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_LBRC,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
         KC_EQL, MT_AGUI, MT_SALT, MT_DCTL, MT_FSFT,    KC_G,       KC_H, MT_JSFT, MT_KCTL, MT_LALT, MT_SCGU, KC_QUOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -233,7 +236,14 @@ void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
             && !state->interrupted
 #endif
         ) {
+            if (tap_hold->hold == KC_SPCW)
+            {
+                caps_word_on();
+            }
+            else
+            {
             register_code16(tap_hold->hold);
+            }
             tap_hold->held = tap_hold->hold;
         } else {
             register_code16(tap_hold->tap);
@@ -255,11 +265,7 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
     { .fn = {NULL, tap_dance_tap_hold_finished, tap_dance_tap_hold_reset}, .user_data = (void *)&((tap_dance_tap_hold_t){tap, hold, 0}), }
 
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_GRV_ESC]    = ACTION_TAP_DANCE_TAP_HOLD(KC_GRV,     KC_ESC),
-    [TD_M_RBRC]     = ACTION_TAP_DANCE_TAP_HOLD(KC_M,       KC_RBRC),
-    [TD_T_GRV]      = ACTION_TAP_DANCE_TAP_HOLD(KC_T,       KC_GRV),
-    [TD_PGUP_HOME]  = ACTION_TAP_DANCE_TAP_HOLD(KC_PGUP,    KC_HOME),
-    [TD_PGDN_END]   = ACTION_TAP_DANCE_TAP_HOLD(KC_PGDN,    KC_END),
+    [TD_TAB_CAPSWORD]   = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB,     KC_SPCW),
 };
 
 // Overrides part
@@ -271,3 +277,35 @@ const key_override_t **key_overrides = (const key_override_t *[]){
 	&delete_key_override,
 	NULL // Null terminate the array of overrides!
 };
+
+// Caps Word part
+
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+        case KC_MINS:
+        case KC_SCLN:
+        case KC_QUOT:
+        case KC_RBRC:
+        case KC_LBRC:
+        case KC_GRV:
+        case KC_DOT:
+        case KC_COMM:
+        case TD_TGRV:
+        case TD_MRBR:
+        case TD_SLQM:
+            add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to next key.
+            return true;
+
+        // Keycodes that continue Caps Word, without shifting.
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        case KC_UNDS:
+            return true;
+
+        default:
+            return false;  // Deactivate Caps Word.
+    }
+}
