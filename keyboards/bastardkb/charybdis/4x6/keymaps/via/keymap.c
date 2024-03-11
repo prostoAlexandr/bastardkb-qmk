@@ -20,6 +20,10 @@
 #    include "timer.h"
 #endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
+#ifdef MACCEL_ENABLE
+#include "qmk_userspace_features/maccel/maccel.h"
+#endif
+
 enum charybdis_keymap_layers {
     LAYER_BASE = 0,
     LAYER_LOWER,
@@ -160,6 +164,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+#ifdef MACCEL_ENABLE
+    mouse_report = pointing_device_task_maccel(mouse_report);
+#endif
     if (abs(mouse_report.x) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || abs(mouse_report.y) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
         if (auto_pointer_layer_timer == 0) {
             layer_on(LAYER_POINTER);

@@ -25,3 +25,6 @@
 	path = lib/lvgl
 	url = https://github.com/qmk/lvgl.git
 	branch = release/v8.2
+[submodule "keyboards/bastardkb/charybdis/4x6/keymaps/via/qmk_userspace_features"]
+	path = keyboards/bastardkb/charybdis/4x6/keymaps/via/qmk_userspace_features
+	url = https://github.com/finrod09/qmk_userspace_features.git
