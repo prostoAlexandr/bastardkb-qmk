@@ -283,11 +283,15 @@ tap_dance_action_t tap_dance_actions[] = {
 
 // Overrides part
 
-const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_BSPC, KC_DEL);
+const key_override_t delete_key_override    = ko_make_basic(MOD_MASK_SHIFT, KC_BSPC, KC_DEL);
+const key_override_t pgdn_key_override      = ko_make_basic(MOD_MASK_SHIFT, TD_DNEN, KC_MS_BTN4);
+const key_override_t pgup_key_override      = ko_make_basic(MOD_MASK_SHIFT, TD_UPHM, KC_MS_BTN5);
 
 // This globally defines all key overrides to be used
 const key_override_t **key_overrides = (const key_override_t *[]){
 	&delete_key_override,
+    &pgdn_key_override,
+    &pgup_key_override,
 	NULL // Null terminate the array of overrides!
 };
 
