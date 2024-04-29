@@ -70,6 +70,11 @@ enum {
 #define LEFT_THUMB_MIN 53
 #define LEFT_THUMB_MAX 55
 
+#if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
+#define TRACKBALL_DEBOUNCE_TIMEOUT_MS 100
+static uint32_t trackball_debounce_timer = 0;
+#endif
+
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 // #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
@@ -165,7 +170,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report)
+{
+#if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
+    if (timer_read32() - trackball_debounce_timer < TRACKBALL_DEBOUNCE_TIMEOUT_MS)
+    {
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+        return mouse_report;
+    }
+#endif
+
 #ifdef MACCEL_ENABLE
     mouse_report = pointing_device_task_maccel(mouse_report);
 #endif
@@ -207,6 +222,20 @@ typedef struct {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     tap_dance_action_t *action;
+
+#if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
+    if (record && record->event.pressed)
+    {
+        switch(get_highest_layer(layer_state | default_layer_state))
+        {
+            case LAYER_BASE:
+            case LAYER_LOWER:
+            {
+                trackball_debounce_timer = timer_read32();
+            }
+        }
+    }
+#endif
 
     switch (keycode) {
         case TD_GRES:
