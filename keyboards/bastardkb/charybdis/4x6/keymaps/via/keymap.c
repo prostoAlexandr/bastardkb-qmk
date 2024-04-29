@@ -163,6 +163,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
+
+#if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
+#define MCM_MIN 0
+#define MCM_MAX 2
+uint8_t mouse_constant_movement = MCM_MIN;
+#define MCM_INC (mouse_constant_movement = mouse_constant_movement >= MCM_MAX ? MCM_MAX : mouse_constant_movement + 1)
+#define MCM_DEC (mouse_constant_movement = mouse_constant_movement <= MCM_MIN ? MCM_MIN : mouse_constant_movement - 1)
+#endif
+
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
@@ -170,11 +179,27 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     mouse_report = pointing_device_task_maccel(mouse_report);
 #endif
     if (abs(mouse_report.x) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || abs(mouse_report.y) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
+#if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
+        MCM_INC;
+        if (mouse_constant_movement < MCM_MAX)
+        {
+            mouse_report.x = 0;
+            mouse_report.y = 0;
+            return mouse_report;
+        }
+#endif
+
         if (auto_pointer_layer_timer == 0) {
             layer_on(LAYER_POINTER);
         }
         auto_pointer_layer_timer = timer_read();
     }
+#if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
+    else
+    {
+        MCM_DEC;
+    }
+#endif
     return mouse_report;
 }
 
