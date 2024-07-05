@@ -71,7 +71,7 @@ enum {
 #define LEFT_THUMB_MAX 55
 
 #if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
-#define TRACKBALL_DEBOUNCE_TIMEOUT_MS 100
+#define TRACKBALL_DEBOUNCE_TIMEOUT_MS 200
 static uint32_t trackball_debounce_timer = 0;
 #endif
 
@@ -235,7 +235,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     tap_dance_action_t *action;
 
 #if CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD == 0
-    if (record && record->event.pressed)
+    if (record && record->event.type == KEY_EVENT)
     {
         switch(get_highest_layer(layer_state | default_layer_state))
         {
