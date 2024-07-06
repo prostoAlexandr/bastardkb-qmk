@@ -43,8 +43,8 @@ enum {
     TD_MINS_DIV,
     TD_TAB_CAPSWORD,
     TD_TG3_ALT,
-    MC_CLAN = SAFE_RANGE,   // Macros part
-    KC_SPCW,
+    TD_CLAN_GUI,
+    KC_SPCW = SAFE_RANGE,   // Macros part
 };
 
 #define TD_GRES TD(TD_GRV_ESC)
@@ -57,13 +57,12 @@ enum {
 #define TD_MNDV TD(TD_MINS_DIV)
 #define TD_TBCW TD(TD_TAB_CAPSWORD)
 #define TD_TGAL TD(TD_TG3_ALT)
+#define TD_CLGU TD(TD_CLAN_GUI)
 
-#define MT_AGUI MT(MOD_LGUI, KC_A)
 #define MT_DCTL MT(MOD_LCTL, KC_D)
 #define MT_FSFT MT(MOD_LSFT, KC_F)
 #define MT_JSFT MT(MOD_RSFT, KC_J)
 #define MT_KCTL MT(MOD_RCTL, KC_K)
-#define MT_SCGU MT(MOD_RGUI, KC_SCLN)
 #define MS_BTN1 KC_MS_BTN1
 #define MS_BTN2 KC_MS_BTN2
 #define MS_BTN3 KC_MS_BTN3
@@ -112,12 +111,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        TD_TBCW,    KC_Q,    KC_W,    KC_E,    KC_R, TD_TGRV,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_LBRC,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-        KC_EQL, MT_AGUI,    KC_S, MT_DCTL, MT_FSFT,    KC_G,       KC_H, MT_JSFT, MT_KCTL,    KC_L, MT_SCGU, KC_QUOT,
+        KC_EQL,    KC_A,    KC_S, MT_DCTL, MT_FSFT,    KC_G,       KC_H, MT_JSFT, MT_KCTL,    KC_L, KC_SCLN, KC_QUOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        KC_MINS,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N, TD_MRBR, KC_COMM,  KC_DOT, TD_SLQM, KC_BSLS,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                    KC_ENT,  KC_SPC, KC_BSPC,    TD_UPHM, TD_DNEN,
-                                           MC_CLAN,   TO(1),    TD_TGAL
+                                           TD_CLGU,   TO(1),    TD_TGAL
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
@@ -276,9 +275,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
-        case MC_CLAN:
+        case TD_CLGU:
         {
-            if (record->event.pressed)
+            action = &tap_dance_actions[TD_INDEX(keycode)];
+            if (!record->event.pressed && action->state.count && !action->state.finished)
             {
                 SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_SPC) SS_DELAY(200) SS_UP(X_SPC) SS_UP(X_LGUI));
             }
@@ -338,6 +338,7 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_MINS_DIV]       = ACTION_TAP_DANCE_TAP_HOLD(KC_PMNS,    KC_PSLS),
     [TD_TAB_CAPSWORD]   = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB,     KC_SPCW),
     [TD_TG3_ALT]        = ACTION_TAP_DANCE_TAP_HOLD(KC_NO,      KC_LALT),
+    [TD_CLAN_GUI]       = ACTION_TAP_DANCE_TAP_HOLD(KC_NO,      KC_LGUI),
 };
 
 // Overrides part
