@@ -26,9 +26,9 @@
 
 enum charybdis_keymap_layers {
     LAYER_BASE = 0,
-    LAYER_LOWER,
-    LAYER_RAISE,
-    LAYER_POINTER,
+    LAYER_NUM,
+    LAYER_FAST,
+    LAYER_PTR,
 };
 
 enum {
@@ -44,7 +44,9 @@ enum {
     TD_TAB_CAPSWORD,
     TD_TG3_ALT,
     TD_CLAN_GUI,
+    TD_TG_NUM_FAST,
     KC_SPCW = SAFE_RANGE,   // Macros part
+    KC_FAST,
 };
 
 #define TD_GRES TD(TD_GRV_ESC)
@@ -58,6 +60,7 @@ enum {
 #define TD_TBCW TD(TD_TAB_CAPSWORD)
 #define TD_TGAL TD(TD_TG3_ALT)
 #define TD_CLGU TD(TD_CLAN_GUI)
+#define TD_NUFA TD(TD_TG_NUM_FAST)
 
 #define MT_DCTL MT(MOD_LCTL, KC_D)
 #define MT_FSFT MT(MOD_LSFT, KC_F)
@@ -75,7 +78,7 @@ static uint32_t trackball_debounce_timer = 0;
 #endif
 
 /** \brief Automatically enable sniping-mode on the pointer layer. */
-// #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
+// #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_PTR
 
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
@@ -88,11 +91,6 @@ static uint16_t auto_pointer_layer_timer = 0;
 #        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 8
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
 #endif     // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-
-#define LOWER MO(LAYER_LOWER)
-#define RAISE MO(LAYER_RAISE)
-#define PT_Z LT(LAYER_POINTER, KC_Z)
-#define PT_SLSH LT(LAYER_POINTER, KC_SLSH)
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
@@ -116,11 +114,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_MINS,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N, TD_MRBR, KC_COMM,  KC_DOT, TD_SLQM, KC_BSLS,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                    KC_ENT,  KC_SPC, KC_BSPC,    TD_UPHM, TD_DNEN,
-                                           TD_CLGU,   TO(1),    TD_TGAL
+                                           TD_CLGU, TD_NUFA,    TD_TGAL
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
-  [LAYER_LOWER] = LAYOUT(
+  [LAYER_NUM] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
         EE_CLR,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -131,30 +129,30 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_SLEP, RGB_SPD, RGB_VAD,RGB_RMOD, KC_VOLD, KC_MPRV,    TD_MNDV,   KC_P1,   KC_P2,   KC_P3, KC_PCMM, KC_PDOT,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                   KC_TRNS, KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS,
-                                           KC_TRNS,   TO(0),    KC_TRNS
-  //                            ╰───────────────────────────╯ ╰──────────────────╯
-  ),
-
-  [LAYER_RAISE] = LAYOUT(
-  // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
-        KC_F12,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
-  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_MNXT,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, KC_VOLU,
-  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_MPLY, KC_LEFT,   KC_UP, KC_DOWN, KC_RGHT,   KC_NO,      KC_NO, KC_RSFT, KC_RCTL, KC_RALT, KC_RGUI, KC_MUTE,
-  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_MPRV, KC_HOME, KC_PGUP, KC_PGDN,  KC_END,   KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, KC_VOLD,
-  // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  KC_TRNS, KC_TRNS, KC_TRNS,    KC_TRNS, KC_TRNS,
                                            KC_TRNS, KC_TRNS,    KC_TRNS
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
-  [LAYER_POINTER] = LAYOUT(
+  [LAYER_FAST] = LAYOUT(
+  // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
+        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_RBRC,
+  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
+       TD_TBCW,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_LBRC,
+  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
+         KC_NO,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,       KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
+         KC_NO,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_BSLS,
+  // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
+                                   KC_ENT,  KC_SPC, KC_BSPC,    TD_UPHM, TD_DNEN,
+                                           TD_CLGU, TD_NUFA,    TD_TGAL
+  //                            ╰───────────────────────────╯ ╰──────────────────╯
+  ),
+
+  [LAYER_PTR] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
         KC_F12,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+        KC_TAB,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
          KC_NO, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT,   KC_NO,    KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_RSFT,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -196,7 +194,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report)
 #endif
     if (abs(mouse_report.x) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || abs(mouse_report.y) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
         if (auto_pointer_layer_timer == 0) {
-            layer_on(LAYER_POINTER);
+            layer_on(LAYER_PTR);
         }
         auto_pointer_layer_timer = timer_read();
     }
@@ -206,7 +204,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report)
 void matrix_scan_user(void) {
     if (auto_pointer_layer_timer != 0 && TIMER_DIFF_16(timer_read(), auto_pointer_layer_timer) >= CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS) {
         auto_pointer_layer_timer = 0;
-        layer_off(LAYER_POINTER);
+        layer_off(LAYER_PTR);
     }
 }
 #    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -239,7 +237,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         switch(get_highest_layer(layer_state | default_layer_state))
         {
             case LAYER_BASE:
-            case LAYER_LOWER:
+            case LAYER_NUM:
+            case LAYER_FAST:
             {
                 trackball_debounce_timer = timer_read32();
             }
@@ -267,11 +266,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
         case TD_TGAL:
+        case TD_NUFA:
         {
             action = &tap_dance_actions[TD_INDEX(keycode)];
             if (!record->event.pressed && action->state.count && !action->state.finished)
             {
-                layer_invert(LAYER_POINTER);
+                tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
+                // Layer number passed via tap
+                layer_invert(tap_hold->tap);
             }
             break;
         }
@@ -302,6 +304,10 @@ void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
             if (tap_hold->hold == KC_SPCW)
             {
                 caps_word_on();
+            }
+            else if (tap_hold->hold == KC_FAST)
+            {
+                layer_invert(LAYER_FAST);
             }
             else
             {
@@ -337,8 +343,9 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_PLUS_MUL]       = ACTION_TAP_DANCE_TAP_HOLD(KC_PPLS,    KC_PAST),
     [TD_MINS_DIV]       = ACTION_TAP_DANCE_TAP_HOLD(KC_PMNS,    KC_PSLS),
     [TD_TAB_CAPSWORD]   = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB,     KC_SPCW),
-    [TD_TG3_ALT]        = ACTION_TAP_DANCE_TAP_HOLD(KC_NO,      KC_LALT),
+    [TD_TG3_ALT]        = ACTION_TAP_DANCE_TAP_HOLD(LAYER_PTR,  KC_LALT),
     [TD_CLAN_GUI]       = ACTION_TAP_DANCE_TAP_HOLD(KC_NO,      KC_LGUI),
+    [TD_TG_NUM_FAST]    = ACTION_TAP_DANCE_TAP_HOLD(LAYER_NUM,  KC_FAST),
 };
 
 // Overrides part
@@ -394,11 +401,14 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         if ((i < LEFT_THUMB_MIN) || (i > LEFT_THUMB_MAX))
             continue;
         switch(get_highest_layer(layer_state|default_layer_state)) {
-            case LAYER_POINTER:
+            case LAYER_PTR:
                 rgb_matrix_set_color(i, RGB_WHITE);
                 break;
-            case LAYER_LOWER:
+            case LAYER_NUM:
                 rgb_matrix_set_color(i, RGB_YELLOW);
+                break;
+            case LAYER_FAST:
+                rgb_matrix_set_color(i, RGB_PURPLE);
                 break;
             default:
                 break;
