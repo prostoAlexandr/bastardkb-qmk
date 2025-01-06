@@ -18,6 +18,10 @@
 #include QMK_KEYBOARD_H
 // #undef POINTING_DEVICE_GESTURES_SCROLL_ENABLE
 
+#ifdef MACCEL_ENABLE
+#include "../../../../charybdis/4x6/keymaps/via/qmk_userspace_features/maccel/maccel.h"
+#endif
+
 enum dilemma_keymap_layers {
     LAYER_BASE = 0,
     LAYER_NUM,
@@ -146,6 +150,14 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 #    endif // DILEMMA_AUTO_SNIPING_ON_LAYER
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report)
+{
+#ifdef MACCEL_ENABLE
+    mouse_report = pointing_device_task_maccel(mouse_report);
+#endif
+    return mouse_report;
+}
 #endif     // POINTING_DEVICE_ENABLEE
 
 #ifdef RGB_MATRIX_ENABLE
