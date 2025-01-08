@@ -67,6 +67,10 @@ enum {
 #define MS_BTN1 KC_MS_BTN1
 #define MS_BTN2 KC_MS_BTN2
 #define MS_BTN3 KC_MS_BTN3
+#define MS_WHUP KC_MS_WH_UP
+#define MS_WHDN KC_MS_WH_DOWN
+#define MS_WHLT KC_MS_WH_LEFT
+#define MS_WHRT KC_MS_WH_RIGHT
 
 // Automatically enable sniping-mode on the pointer layer.
 // #define DILEMMA_AUTO_SNIPING_ON_LAYER LAYER_PTR
@@ -82,6 +86,8 @@ enum {
 #    define S_D_MOD KC_NO
 #    define SNIPING KC_NO
 #endif // !POINTING_DEVICE_ENABLE
+static uint16_t auto_pointer_layer_timer = 0;
+#define DILEMMA_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -131,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
         KC_F12,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-        KC_TAB,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+        KC_TAB, DRG_TOG, DRGSCRL, MS_BTN2, MS_BTN1, MS_BTN3,    MS_WHLT, MS_WHDN, MS_WHUP, MS_WHRT,   KC_NO,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
          KC_NO, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT,   KC_NO,    KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_RSFT,   KC_NO,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -156,7 +162,22 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report)
 #ifdef MACCEL_ENABLE
     mouse_report = pointing_device_task_maccel(mouse_report);
 #endif
+
+    if (abs(mouse_report.x) || abs(mouse_report.y))
+    {
+        if (auto_pointer_layer_timer == 0) {
+            layer_on(LAYER_PTR);
+        }
+        auto_pointer_layer_timer = timer_read();
+    }
     return mouse_report;
+}
+
+void matrix_scan_user(void) {
+    if (auto_pointer_layer_timer != 0 && TIMER_DIFF_16(timer_read(), auto_pointer_layer_timer) >= DILEMMA_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS) {
+        auto_pointer_layer_timer = 0;
+        layer_off(LAYER_PTR);
+    }
 }
 #endif     // POINTING_DEVICE_ENABLEE
 
